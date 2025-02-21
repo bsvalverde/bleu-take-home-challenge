@@ -10,6 +10,7 @@ contract BleuStaking is Ownable {
   IERC721 public nftContract;
 
   event Staked(address indexed user, uint256 indexed tokenId, uint256 timestamp);
+  event Unstaked(address indexed user, uint256 indexed tokenId, uint256 timestamp);
 
   constructor(address _nftContract) Ownable(msg.sender) {
     nftContract = IERC721(_nftContract);
@@ -24,5 +25,15 @@ contract BleuStaking is Ownable {
     nftContract.transferFrom(user, address(this), _tokenId);
     stakedNFTs[user][_tokenId] = currentTimestamp;
     emit Staked(user, _tokenId, currentTimestamp);
+  }
+
+  function unstake(uint256 _tokenId) external {
+    address user = msg.sender;
+
+    require(stakedNFTs[user][_tokenId] != 0, "NFT not staked");
+
+    delete stakedNFTs[user][_tokenId];
+    nftContract.transferFrom(address(this), user, _tokenId);
+    emit Unstaked(user, _tokenId, block.timestamp);
   }
 }
