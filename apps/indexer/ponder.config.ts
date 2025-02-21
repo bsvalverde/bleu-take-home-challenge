@@ -1,25 +1,33 @@
-import { createConfig } from 'ponder';
-import { http } from 'viem';
+import { createConfig } from "ponder";
+import { getAddress, http } from "viem";
+import BleuDeploy from "../contracts/broadcast/BleuNFT.s.sol/31337/run-latest.json";
+import { BleuNFTAbi } from "./abis/BleuNFT";
+import { BleuStakingContractAbi } from "./abis/BleuStakingContract";
+import { getContractAddress } from "./utils/getContractAddress";
 
-import { ExampleContractAbi } from './abis/ExampleContractAbi';
+const BleuNFTAddress = getAddress(BleuDeploy.transactions[0]!.contractAddress);
+const BleuStakingContractAddress = getAddress(
+  BleuDeploy.transactions[2]!.contractAddress
+);
 
 export default createConfig({
   networks: {
-    anvil_localhost_testnet: {
+    anvil: {
       chainId: 31337,
-      // This is Anvil's default RPC URL. Make sure you're running it.
-      transport: http('http://localhost:8545'),
+      transport: http("http://localhost:8545"),
+      disableCache: true,
     },
   },
   contracts: {
-    ExampleContract: {
-      network: 'anvil_localhost_testnet',
-      // TODO: Replace with the actual abi of the contract
-      // Note: You'll probably want to use a mergeAbis function to merge the abi with the erc721 abi
-      abi: ExampleContractAbi,
-      // TODO: Replace with the actual address of the contract
-      address: '0x0000000000000000000000000000000000000000',
-      startBlock: 1,
+    BleuNFT: {
+      network: "anvil",
+      abi: BleuNFTAbi,
+      address: getContractAddress("BleuNFT"),
+    },
+    BleuStakingContract: {
+      network: "anvil",
+      abi: BleuStakingContractAbi,
+      address: getContractAddress("BleuStakingContract"),
     },
   },
 });
