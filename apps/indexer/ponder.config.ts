@@ -1,14 +1,10 @@
-import { createConfig } from "ponder";
-import { getAddress, http } from "viem";
-import BleuDeploy from "../contracts/broadcast/BleuNFT.s.sol/31337/run-latest.json";
-import { BleuNFTAbi } from "./abis/BleuNFT";
-import { BleuStakingContractAbi } from "./abis/BleuStakingContract";
+import {
+  BleuNFTAbi,
+  BleuStakingContractAbi,
+} from "@bleu-builders/tech-challenge-abis";
+import { createConfig, mergeAbis } from "ponder";
+import { erc721Abi, http } from "viem";
 import { getContractAddress } from "./utils/getContractAddress";
-
-const BleuNFTAddress = getAddress(BleuDeploy.transactions[0]!.contractAddress);
-const BleuStakingContractAddress = getAddress(
-  BleuDeploy.transactions[2]!.contractAddress
-);
 
 export default createConfig({
   networks: {
@@ -21,7 +17,7 @@ export default createConfig({
   contracts: {
     BleuNFT: {
       network: "anvil",
-      abi: BleuNFTAbi,
+      abi: mergeAbis([erc721Abi, BleuNFTAbi]),
       address: getContractAddress("BleuNFT"),
     },
     BleuStakingContract: {

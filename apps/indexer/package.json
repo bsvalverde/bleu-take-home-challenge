@@ -10,6 +10,7 @@
     "clean": "rm -rf .ponder node_modules"
   },
   "dependencies": {
+    "@bleu-builders/tech-challenge-abis": "workspace:*",
     "hono": "^4.5.0",
     "ponder": "^0.9.5",
     "uuid": "^11.1.0",
