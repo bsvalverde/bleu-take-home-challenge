@@ -23,7 +23,8 @@
 
     
     "paths": {
-      "@bleu-builders/tech-challenge-abis": ["../packages/abis/src"],
+      "@bleu-builders/tech-challenge-contracts": ["../packages/contracts/src"],
+      "@bleu-builders/tech-challenge-contracts/*": ["../packages/contracts/src/*"],
     }
   },
   "include": ["./**/*.ts"],

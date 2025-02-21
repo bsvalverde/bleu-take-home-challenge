@@ -1,5 +1,5 @@
 import { getAddress } from "viem";
-import BleuDeploy from "../../contracts/broadcast/BleuNFT.s.sol/31337/run-latest.json";
+import BleuDeploy from "../../../../apps/contracts/broadcast/BleuNFT.s.sol/31337/run-latest.json";
 
 export function getContractAddress(name: string) {
   const transaction = BleuDeploy.transactions.find(

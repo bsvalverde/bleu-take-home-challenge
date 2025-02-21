@@ -1,0 +1,9 @@
+{
+  "name": "@bleu-builders/tech-challenge-contracts",
+  "version": "1.0.0",
+  "main": "./src/index.ts",
+  "dependencies": {
+    "ponder": "^0.9.5",
+    "viem": "^2.21.3"
+  }
+}

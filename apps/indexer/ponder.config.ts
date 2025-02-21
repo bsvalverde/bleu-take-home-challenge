@@ -1,10 +1,10 @@
 import {
   BleuNFTAbi,
   BleuStakingContractAbi,
-} from "@bleu-builders/tech-challenge-abis";
-import { createConfig, mergeAbis } from "ponder";
-import { erc721Abi, http } from "viem";
-import { getContractAddress } from "./utils/getContractAddress";
+  getContractAddress,
+} from "@bleu-builders/tech-challenge-contracts";
+import { createConfig } from "ponder";
+import { http } from "viem";
 
 export default createConfig({
   networks: {
@@ -17,7 +17,7 @@ export default createConfig({
   contracts: {
     BleuNFT: {
       network: "anvil",
-      abi: mergeAbis([erc721Abi, BleuNFTAbi]),
+      abi: BleuNFTAbi,
       address: getContractAddress("BleuNFT"),
     },
     BleuStakingContract: {
