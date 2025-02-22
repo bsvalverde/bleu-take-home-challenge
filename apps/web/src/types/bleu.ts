@@ -1,9 +1,11 @@
 import { NFT } from "./nft";
 
-export interface GetUserNFTResponse {
-  data: {
-    nfts: {
-      items: NFT[];
-    };
+export interface NFTList {
+  nfts: {
+    items: NFT[];
   };
+}
+
+export interface GetUserNFTResponse {
+  data: NFTList;
 }

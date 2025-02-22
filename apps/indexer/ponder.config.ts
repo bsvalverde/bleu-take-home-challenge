@@ -1,6 +1,7 @@
 import {
   BleuNFTAbi,
   BleuStakingContractAbi,
+  Contracts,
   getContractAddress,
 } from "@bleu-builders/tech-challenge-contracts";
 import { createConfig } from "ponder";
@@ -18,12 +19,12 @@ export default createConfig({
     BleuNFT: {
       network: "anvil",
       abi: BleuNFTAbi,
-      address: getContractAddress("BleuNFT"),
+      address: getContractAddress(Contracts.BleuNFT),
     },
     BleuStakingContract: {
       network: "anvil",
       abi: BleuStakingContractAbi,
-      address: getContractAddress("BleuStakingContract"),
+      address: getContractAddress(Contracts.BleuStakingContract),
     },
   },
 });

@@ -4,6 +4,7 @@ import { userContext } from "@/contexts/user-context";
 import { getQueryKeyForUserNFTList } from "@/utils/queryKeys";
 import {
   BleuNFTAbi,
+  Contracts,
   getContractAddress,
 } from "@bleu-builders/tech-challenge-contracts";
 import { useQueryClient } from "@tanstack/react-query";
@@ -20,11 +21,12 @@ export function BleuMinter() {
 
   const mint = async () => {
     writeContract({
-      address: getContractAddress("BleuNFT"),
+      address: getContractAddress(Contracts.BleuNFT),
       abi: BleuNFTAbi,
       functionName: "mint",
       args: [userAddress, BigInt(new Date().getTime())],
     });
+    // TODO fix loading feedback and toast error/success
     queryClient.invalidateQueries({
       queryKey: getQueryKeyForUserNFTList(userAddress),
     });

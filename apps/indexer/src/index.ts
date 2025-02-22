@@ -1,5 +1,5 @@
 import { ponder } from "ponder:registry";
-import { nft, stakingEvents } from "ponder:schema";
+import { nft, stakingEvent } from "ponder:schema";
 
 ponder.on("BleuNFT:Mint", async ({ event, context }) => {
   await context.db.insert(nft).values({
@@ -10,8 +10,10 @@ ponder.on("BleuNFT:Mint", async ({ event, context }) => {
 
 ponder.on("BleuStakingContract:Staked", async ({ event, context }) => {
   await Promise.all([
-    context.db.update(nft, { id: event.args.tokenId }).set({ staked: true }),
-    context.db.insert(stakingEvents).values({
+    context.db
+      .update(nft, { id: event.args.tokenId })
+      .set({ staked: true, stakedAt: event.args.timestamp }),
+    context.db.insert(stakingEvent).values({
       user: event.args.user,
       tokenId: event.args.tokenId,
       eventType: "STAKED",
@@ -22,8 +24,10 @@ ponder.on("BleuStakingContract:Staked", async ({ event, context }) => {
 
 ponder.on("BleuStakingContract:Unstaked", async ({ event, context }) => {
   await Promise.all([
-    context.db.update(nft, { id: event.args.tokenId }).set({ staked: false }),
-    context.db.insert(stakingEvents).values({
+    context.db
+      .update(nft, { id: event.args.tokenId })
+      .set({ staked: false, stakedAt: null }),
+    context.db.insert(stakingEvent).values({
       user: event.args.user,
       tokenId: event.args.tokenId,
       eventType: "UNSTAKED",
