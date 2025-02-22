@@ -1,24 +1,34 @@
 "use client";
 
+import { userContext } from "@/contexts/user-context";
+import { getQueryKeyForUserNFTList } from "@/utils/queryKeys";
 import {
   BleuNFTAbi,
   getContractAddress,
 } from "@bleu-builders/tech-challenge-contracts";
-import { useConnectorClient, useWriteContract } from "wagmi";
+import { useQueryClient } from "@tanstack/react-query";
+import { useContext } from "react";
+import { useWriteContract } from "wagmi";
 import { LoadingButton } from "../ui/loading-button";
 
 export function BleuMinter() {
-  const { data: hash, isPending, writeContract } = useWriteContract();
+  const { userAddress } = useContext(userContext);
 
-  const { data } = useConnectorClient();
+  const { isPending, writeContract } = useWriteContract();
 
-  const mint = async () =>
+  const queryClient = useQueryClient();
+
+  const mint = async () => {
     writeContract({
       address: getContractAddress("BleuNFT"),
       abi: BleuNFTAbi,
       functionName: "mint",
-      args: [data!.account.address, BigInt(2)],
+      args: [userAddress, BigInt(new Date().getTime())],
     });
+    queryClient.invalidateQueries({
+      queryKey: getQueryKeyForUserNFTList(userAddress),
+    });
+  };
 
   return (
     <LoadingButton onClick={mint} loading={isPending}>
