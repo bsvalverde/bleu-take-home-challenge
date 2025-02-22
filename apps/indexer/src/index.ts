@@ -1,37 +1,33 @@
 import { ponder } from "ponder:registry";
-import { bleuNFT, bleuNFTStaking } from "ponder:schema";
+import { nft, stakingEvents } from "ponder:schema";
 
 ponder.on("BleuNFT:Mint", async ({ event, context }) => {
-  const { client, contracts } = context;
-  const { BleuNFT } = contracts;
-
-  const owner = await client.readContract({
-    abi: BleuNFT.abi,
-    address: BleuNFT.address,
-    functionName: "ownerOf",
-    args: [event.args.tokenId],
-  });
-
-  await context.db.insert(bleuNFT).values({
+  await context.db.insert(nft).values({
     id: event.args.tokenId,
-    owner,
+    owner: event.args.to,
   });
 });
 
 ponder.on("BleuStakingContract:Staked", async ({ event, context }) => {
-  await context.db.insert(bleuNFTStaking).values({
-    user: event.args.user,
-    tokenId: event.args.tokenId,
-    type: "STAKED",
-    timestamp: event.args.timestamp,
-  });
+  await Promise.all([
+    context.db.update(nft, { id: event.args.tokenId }).set({ staked: true }),
+    context.db.insert(stakingEvents).values({
+      user: event.args.user,
+      tokenId: event.args.tokenId,
+      eventType: "STAKED",
+      timestamp: event.args.timestamp,
+    }),
+  ]);
 });
 
 ponder.on("BleuStakingContract:Unstaked", async ({ event, context }) => {
-  await context.db.insert(bleuNFTStaking).values({
-    user: event.args.user,
-    tokenId: event.args.tokenId,
-    type: "UNSTAKED",
-    timestamp: event.args.timestamp,
-  });
+  await Promise.all([
+    context.db.update(nft, { id: event.args.tokenId }).set({ staked: false }),
+    context.db.insert(stakingEvents).values({
+      user: event.args.user,
+      tokenId: event.args.tokenId,
+      eventType: "UNSTAKED",
+      timestamp: event.args.timestamp,
+    }),
+  ]);
 });
