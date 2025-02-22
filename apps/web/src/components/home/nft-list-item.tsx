@@ -9,8 +9,8 @@ import {
   getContractAddress,
 } from "@bleu-builders/tech-challenge-contracts";
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useContext } from "react";
-import { useWriteContract } from "wagmi";
+import { useContext, useEffect } from "react";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { LoadingButton } from "../ui/loading-button";
 
 interface Props {
@@ -24,30 +24,41 @@ export function NFTListItem({ nft }: Props) {
 
   const queryClient = useQueryClient();
 
-  const { isPending, writeContractAsync } = useWriteContract();
-
-  // TODO fix feedback
-  // isPending ends before contract is succesfull
-
-  const optimisticUpdate = useCallback(() => {
-    const queryKey = getQueryKeyForUserNFTList(userAddress);
-    const previousNFTs: NFTList = queryClient.getQueryData(queryKey)!;
-    queryClient.setQueryData(queryKey, {
-      nfts: {
-        items: previousNFTs.nfts.items.map((item) => {
-          if (nft.id !== item.id) {
-            return item;
-          }
-          return {
-            ...item,
-            staked: !item.staked,
-            stakedAt: item.staked ? null : new Date(),
-          };
-        }),
+  const {
+    data: transactionHash,
+    isPending,
+    writeContractAsync,
+  } = useWriteContract();
+  const { data: transactionReceipt, isFetching } = useWaitForTransactionReceipt(
+    {
+      hash: transactionHash,
+      query: {
+        enabled: Boolean(transactionHash),
       },
-    });
-    queryClient.invalidateQueries({ queryKey });
-  }, []);
+    }
+  );
+
+  useEffect(() => {
+    if (transactionReceipt?.status === "success") {
+      const queryKey = getQueryKeyForUserNFTList(userAddress);
+      const previousNFTs: NFTList = queryClient.getQueryData(queryKey)!;
+      queryClient.setQueryData(queryKey, {
+        nfts: {
+          items: previousNFTs.nfts.items.map((item) => {
+            if (nft.id !== item.id) {
+              return item;
+            }
+            return {
+              ...item,
+              staked: !item.staked,
+              stakedAt: item.staked ? null : new Date(),
+            };
+          }),
+        },
+      });
+      queryClient.invalidateQueries({ queryKey });
+    }
+  }, [transactionReceipt]);
 
   const toggleStake = async () => {
     try {
@@ -62,16 +73,14 @@ export function NFTListItem({ nft }: Props) {
           ],
         });
       }
-      await writeContractAsync({
+      writeContractAsync({
         address: getContractAddress(Contracts.BleuStakingContract),
         abi: BleuStakingContractAbi,
         functionName: staked ? "unstake" : "stake",
         args: [BigInt(nft.id)],
       });
-      optimisticUpdate();
     } catch (error) {
       console.error(error);
-      // todo toast error and maybe success
     }
   };
 
@@ -79,7 +88,7 @@ export function NFTListItem({ nft }: Props) {
     <li>
       <p>id: {id}</p>
       <LoadingButton
-        loading={isPending}
+        loading={isPending || isFetching}
         variant={staked ? "outline" : "default"}
         onClick={toggleStake}
       >

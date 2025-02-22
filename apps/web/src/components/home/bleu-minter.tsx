@@ -1,6 +1,7 @@
 "use client";
 
 import { userContext } from "@/contexts/user-context";
+import { NFTList } from "@/types/bleu";
 import { getQueryKeyForUserNFTList } from "@/utils/queryKeys";
 import {
   BleuNFTAbi,
@@ -8,32 +9,64 @@ import {
   getContractAddress,
 } from "@bleu-builders/tech-challenge-contracts";
 import { useQueryClient } from "@tanstack/react-query";
-import { useContext } from "react";
-import { useWriteContract } from "wagmi";
+import { useContext, useEffect, useRef } from "react";
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { LoadingButton } from "../ui/loading-button";
 
 export function BleuMinter() {
   const { userAddress } = useContext(userContext);
 
-  const { isPending, writeContract } = useWriteContract();
+  const newIdRef = useRef(0);
 
   const queryClient = useQueryClient();
 
+  const {
+    data: transactionHash,
+    isPending,
+    writeContractAsync,
+  } = useWriteContract();
+  const { data: transactionReceipt, isFetching } = useWaitForTransactionReceipt(
+    {
+      hash: transactionHash,
+      query: {
+        enabled: Boolean(transactionHash),
+      },
+    }
+  );
+
+  useEffect(() => {
+    if (transactionReceipt?.status === "success") {
+      const queryKey = getQueryKeyForUserNFTList(userAddress);
+      const previousNFTs: NFTList = queryClient.getQueryData(queryKey)!;
+      queryClient.setQueryData(queryKey, {
+        nfts: {
+          items: [
+            ...previousNFTs.nfts.items,
+            {
+              id: newIdRef.current,
+              owner: userAddress,
+              staked: false,
+              stakedAt: null,
+            },
+          ],
+        },
+      });
+      queryClient.invalidateQueries({ queryKey });
+    }
+  }, [transactionReceipt]);
+
   const mint = async () => {
-    writeContract({
+    newIdRef.current = new Date().getTime();
+    writeContractAsync({
       address: getContractAddress(Contracts.BleuNFT),
       abi: BleuNFTAbi,
       functionName: "mint",
-      args: [userAddress, BigInt(new Date().getTime())],
-    });
-    // TODO fix loading feedback and toast error/success
-    queryClient.invalidateQueries({
-      queryKey: getQueryKeyForUserNFTList(userAddress),
+      args: [userAddress, BigInt(newIdRef.current)],
     });
   };
 
   return (
-    <LoadingButton onClick={mint} loading={isPending}>
+    <LoadingButton onClick={mint} loading={isPending || isFetching}>
       Mint
     </LoadingButton>
   );
