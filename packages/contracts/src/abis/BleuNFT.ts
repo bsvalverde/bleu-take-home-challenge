@@ -3,7 +3,6 @@ import { erc721Abi } from "viem";
 
 export const BleuNFTAbi = mergeAbis([
   erc721Abi,
-
   [
     {
       inputs: [],
