@@ -1,20 +1,22 @@
 import { onchainEnum, onchainTable } from "ponder";
 import { v4 as uuidv4 } from "uuid";
 
-export const bleuNFT = onchainTable("bleu_nft", (t) => ({
+export const nft = onchainTable("nft", (t) => ({
   id: t.bigint().primaryKey(),
   owner: t.text(),
+  staked: t.boolean().default(false),
+  stakedAt: t.bigint(),
 }));
 
-export const stakingType = onchainEnum("type", ["STAKED", "UNSTAKED"]);
+export const stakingType = onchainEnum("staking_type", ["STAKED", "UNSTAKED"]);
 
-export const bleuNFTStaking = onchainTable("bleu_nft_staked", (t) => ({
+export const stakingEvent = onchainTable("staking_event", (t) => ({
   id: t
     .text()
     .primaryKey()
     .$default(() => uuidv4()),
   user: t.text().notNull(),
   tokenId: t.bigint().notNull(),
-  type: stakingType("type").notNull(),
+  eventType: stakingType("staking_type").notNull(),
   timestamp: t.bigint().notNull(),
 }));

@@ -1,0 +1,1 @@
+export { getContractAddress } from "./getContractAddress";
