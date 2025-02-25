@@ -12,6 +12,10 @@ const navItems: NavItem[] = [
     path: "/",
   },
   {
+    label: "My NFTs",
+    path: "/my-nfts",
+  },
+  {
     label: "Theme Showcase",
     path: "/theme-showcase",
   },

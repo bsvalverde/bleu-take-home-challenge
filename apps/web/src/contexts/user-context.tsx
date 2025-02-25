@@ -22,7 +22,11 @@ export function UserContextProvider({ children }: React.PropsWithChildren) {
   const userAddress = data?.account.address;
 
   if (!userAddress) {
-    return null;
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p>Connect your wallet to view your NFTs</p>
+      </div>
+    );
   }
 
   return (
