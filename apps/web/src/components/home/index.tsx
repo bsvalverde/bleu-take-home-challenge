@@ -4,9 +4,11 @@ import { NFTList } from "./nft-list";
 
 export function Home() {
   return (
-    <UserContextProvider>
-      <BleuMinter />
-      <NFTList />
-    </UserContextProvider>
+    <div className="flex-1 p-6 flex flex-col items-center gap-4">
+      <UserContextProvider>
+        <BleuMinter />
+        <NFTList />
+      </UserContextProvider>
+    </div>
   );
 }

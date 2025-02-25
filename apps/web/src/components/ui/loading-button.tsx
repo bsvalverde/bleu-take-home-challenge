@@ -1,31 +1,13 @@
 import { cn } from "@/lib/utils";
-import { cva } from "class-variance-authority";
+import { Loader } from "lucide-react";
 import { Button, ButtonProps } from "./button";
 
 interface Props extends ButtonProps {
   loading: boolean;
 }
 
-const spinnerVariants = cva(
-  "absolute inset-0 flex items-center justify-center",
-  {
-    variants: {
-      variant: {
-        default: "text-primary-foreground",
-        destructive: "text-destructive-foreground",
-        outline: "",
-        secondary: "text-secondary-foreground",
-        ghost: "",
-        link: "text-primary",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
-);
-
 export function LoadingButton({
+  children,
   className,
   disabled,
   loading,
@@ -33,20 +15,18 @@ export function LoadingButton({
   ...props
 }: Props) {
   return (
-    <div className="relative inline-block">
-      <Button
-        className={cn(className, loading && "text-transparent")}
-        disabled={disabled || loading}
-        variant={variant}
-        {...props}
-      />
+    <Button
+      className={cn(className, "relative")}
+      disabled={disabled || loading}
+      variant={variant}
+      {...props}
+    >
+      <span className={cn(loading && "text-transparent")}>{children}</span>
       {loading && (
-        <span className={cn(spinnerVariants({ variant, className }))}>
-          Loading...
-        </span>
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Loader className="animate-spin" />
+        </div>
       )}
-    </div>
+    </Button>
   );
 }
-
-// TODO add spinner

@@ -4,6 +4,7 @@ import { userContext } from "@/contexts/user-context";
 import { getUserNFTs } from "@/lib/bleu";
 import { getQueryKeyForUserNFTList } from "@/utils/queryKeys";
 import { useQuery } from "@tanstack/react-query";
+import { Loader } from "lucide-react";
 import { useContext } from "react";
 import { NFTListItem } from "./nft-list-item";
 
@@ -16,18 +17,28 @@ export function NFTList() {
   });
 
   if (isLoading) {
-    return <p>loading</p>;
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <Loader className="animate-spin" />
+      </div>
+    );
   }
 
   if (!list) {
-    return <p>nothing to show</p>;
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p>You don't currently own any NFTs</p>
+      </div>
+    );
   }
 
   return (
-    <ul>
-      {list.nfts.items.map((nft) => (
-        <NFTListItem key={nft.id} nft={nft} />
-      ))}
-    </ul>
+    <div className="w-full">
+      <ul className="flex gap-2 flex-wrap">
+        {list.nfts.items.map((nft) => (
+          <NFTListItem key={nft.id} nft={nft} />
+        ))}
+      </ul>
+    </div>
   );
 }
