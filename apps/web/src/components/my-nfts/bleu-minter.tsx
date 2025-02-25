@@ -2,7 +2,10 @@
 
 import { userContext } from "@/contexts/user-context";
 import { NFTList } from "@/types/bleu";
-import { getQueryKeyForUserNFTList } from "@/utils/queryKeys";
+import {
+  getQueryKeyForGlobalStats,
+  getQueryKeyForUserNFTList,
+} from "@/utils/queryKeys";
 import {
   BleuNFTAbi,
   Contracts,
@@ -49,6 +52,9 @@ export function BleuMinter() {
           },
         });
         queryClient.invalidateQueries({ queryKey });
+        queryClient.invalidateQueries({
+          queryKey: getQueryKeyForGlobalStats(),
+        });
         setIsLoading(false);
       }
     }, 1000);

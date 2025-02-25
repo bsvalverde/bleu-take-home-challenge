@@ -4,8 +4,8 @@ import { userContext } from "@/contexts/user-context";
 import { getUserNFTs } from "@/lib/bleu";
 import { getQueryKeyForUserNFTList } from "@/utils/queryKeys";
 import { useQuery } from "@tanstack/react-query";
-import { Loader } from "lucide-react";
 import { useContext } from "react";
+import { LoadingPage } from "../loading-page";
 import { NFTListItem } from "./nft-list-item";
 
 export function NFTList() {
@@ -14,14 +14,11 @@ export function NFTList() {
   const { data: list, isLoading } = useQuery({
     queryKey: getQueryKeyForUserNFTList(userAddress),
     queryFn: () => getUserNFTs(userAddress!),
+    refetchOnWindowFocus: false,
   });
 
   if (isLoading) {
-    return (
-      <div className="flex-1 flex items-center justify-center">
-        <Loader className="animate-spin" />
-      </div>
-    );
+    return <LoadingPage />;
   }
 
   if (!list) {

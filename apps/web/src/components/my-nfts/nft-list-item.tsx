@@ -1,7 +1,10 @@
 import { userContext } from "@/contexts/user-context";
 import { NFTList } from "@/types/bleu";
 import { NFT } from "@/types/nft";
-import { getQueryKeyForUserNFTList } from "@/utils/queryKeys";
+import {
+  getQueryKeyForGlobalStats,
+  getQueryKeyForUserNFTList,
+} from "@/utils/queryKeys";
 import {
   BleuNFTAbi,
   BleuStakingContractAbi,
@@ -55,6 +58,9 @@ export function NFTListItem({ nft }: Props) {
           },
         });
         queryClient.invalidateQueries({ queryKey });
+        queryClient.invalidateQueries({
+          queryKey: getQueryKeyForGlobalStats(),
+        });
         setIsLoading(false);
       }
     }, 1000);
