@@ -8,6 +8,18 @@ export const nft = onchainTable("nft", (t) => ({
   stakedAt: t.bigint(),
 }));
 
+export const owner = onchainTable("owner", (t) => ({
+  id: t.text().primaryKey(),
+  nftsStaked: t
+    .integer()
+    .$default(() => 0)
+    .notNull(),
+  nftsUnstaked: t
+    .integer()
+    .$default(() => 1)
+    .notNull(),
+}));
+
 export const stakingType = onchainEnum("staking_type", ["STAKED", "UNSTAKED"]);
 
 export const stakingEvent = onchainTable("staking_event", (t) => ({

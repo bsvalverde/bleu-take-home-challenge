@@ -1,11 +1,19 @@
 import { ponder } from "ponder:registry";
-import { nft, stakingEvent } from "ponder:schema";
+import { nft, owner, stakingEvent } from "ponder:schema";
 
 ponder.on("BleuNFT:Mint", async ({ event, context }) => {
   await context.db.insert(nft).values({
     id: event.args.tokenId,
     owner: event.args.to,
   });
+  await context.db
+    .insert(owner)
+    .values({
+      id: event.args.to,
+    })
+    .onConflictDoUpdate((row) => ({
+      nftsUnstaked: row.nftsUnstaked + 1,
+    }));
 });
 
 ponder.on("BleuStakingContract:Staked", async ({ event, context }) => {
@@ -19,6 +27,10 @@ ponder.on("BleuStakingContract:Staked", async ({ event, context }) => {
       eventType: "STAKED",
       timestamp: event.args.timestamp,
     }),
+    context.db.update(owner, { id: event.args.user }).set((row) => ({
+      nftsStaked: row.nftsStaked + 1,
+      nftsUnstaked: row.nftsUnstaked - 1,
+    })),
   ]);
 });
 
@@ -33,5 +45,9 @@ ponder.on("BleuStakingContract:Unstaked", async ({ event, context }) => {
       eventType: "UNSTAKED",
       timestamp: event.args.timestamp,
     }),
+    context.db.update(owner, { id: event.args.user }).set((row) => ({
+      nftsStaked: row.nftsStaked - 1,
+      nftsUnstaked: row.nftsUnstaked + 1,
+    })),
   ]);
 });
