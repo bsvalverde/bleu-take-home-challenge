@@ -13,6 +13,7 @@ import {
 } from "@bleu-builders/tech-challenge-contracts";
 import { useQueryClient } from "@tanstack/react-query";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { LoadingButton } from "../ui/loading-button";
 
@@ -62,6 +63,9 @@ export function NFTListItem({ nft }: Props) {
           queryKey: getQueryKeyForGlobalStats(),
         });
         setIsLoading(false);
+        toast.success(
+          `Succesfully ${staked ? "unstaked" : "staked"} NFT #${nft.id}`
+        );
       }
     }, 1000);
   }, [isTransactionSuccessful]);
@@ -89,6 +93,7 @@ export function NFTListItem({ nft }: Props) {
     } catch (error) {
       setIsLoading(false);
       console.error(error);
+      toast.error(`Unable to ${staked ? "unstake" : "stake"} NFT #${nft.id}`);
     }
   };
 

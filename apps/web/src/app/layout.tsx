@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
 import type { Metadata } from "next";
@@ -31,6 +32,7 @@ export default function RootLayout({
         <Providers>
           <Header />
           {children}
+          <Toaster richColors />
         </Providers>
       </body>
     </html>

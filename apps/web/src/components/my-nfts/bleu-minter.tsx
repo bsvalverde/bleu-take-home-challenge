@@ -13,6 +13,7 @@ import {
 } from "@bleu-builders/tech-challenge-contracts";
 import { useQueryClient } from "@tanstack/react-query";
 import { useContext, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { LoadingButton } from "../ui/loading-button";
 
@@ -56,6 +57,7 @@ export function BleuMinter() {
           queryKey: getQueryKeyForGlobalStats(),
         });
         setIsLoading(false);
+        toast.success(`Minted NFT #${newIdRef.current}`);
       }
     }, 1000);
   }, [isTransactionSuccessful]);
@@ -73,7 +75,7 @@ export function BleuMinter() {
     } catch (error) {
       console.error(error);
       setIsLoading(false);
-      // todo toast error
+      toast.error("Failed to mint new NFT");
     }
   };
 
