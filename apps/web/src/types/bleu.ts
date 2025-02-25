@@ -6,6 +6,20 @@ export interface NFTList {
   };
 }
 
+export interface GetGlobalStatsResponse {
+  data: {
+    staked: {
+      totalCount: number;
+    };
+    unstaked: {
+      totalCount: number;
+    };
+    owners: {
+      items: { id: string; nftsStaked: number }[];
+    };
+  };
+}
+
 export interface GetUserNFTResponse {
   data: NFTList;
 }
