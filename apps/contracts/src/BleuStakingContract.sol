@@ -22,7 +22,7 @@ contract BleuStakingContract is Ownable {
     require(nft.ownerOf(_tokenId) == user, "You don't own this NFT");
 
     uint256 currentTimestamp = block.timestamp;
-    nft.safeTransferFrom(user, address(this), _tokenId);
+    nft.transferFrom(user, address(this), _tokenId);
     stakedNFTs[user][_tokenId] = currentTimestamp;
     emit Staked(user, _tokenId, currentTimestamp);
   }
@@ -33,7 +33,7 @@ contract BleuStakingContract is Ownable {
     require(stakedNFTs[user][_tokenId] != 0, "NFT not staked");
 
     delete stakedNFTs[user][_tokenId];
-    nft.safeTransferFrom(address(this), user, _tokenId);
+    nft.transferFrom(address(this), user, _tokenId);
     emit Unstaked(user, _tokenId, block.timestamp);
   }
 }
