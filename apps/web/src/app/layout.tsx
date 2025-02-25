@@ -1,4 +1,4 @@
-import Header from "@/components/layout/header";
+import Header from "@/components/header";
 import { cn } from "@/lib/utils";
 import { Providers } from "@/providers";
 import type { Metadata } from "next";
