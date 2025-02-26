@@ -4,9 +4,8 @@ This directory contains the smart contract implementation for the Bleu NFT staki
 
 ## Key Features
 
-- ERC721 NFT implementation (`BleuNFT`)
-- Minting functionality
-- Staking/Unstaking capabilities
+- ERC721 NFT implementation (`BleuNFT`) with minting functionality
+- Staking/Unstaking capabilities through a new custom contract (`BleuStakingContract`)
 - Event emissions for tracking state changes
 
 ## Contract Architecture
@@ -14,6 +13,9 @@ This directory contains the smart contract implementation for the Bleu NFT staki
 The main contract `BleuNFT` inherits from OpenZeppelin's ERC721 and implements:
 
 - `mint()`: Allows users to mint new NFTs
+
+The staking contract `BleuStakingContract` implements:
+
 - `stake()`: Enables NFT staking
 - `unstake()`: Allows withdrawal of staked NFTs
 
@@ -89,6 +91,11 @@ Start a local node:
 
 ```bash
 anvil
+```
+
+Use one of the provided private keys to deploy the contracts:
+```bash
+forge script script/BleuNFT.s.sol:BleuNFTScript --rpc-url http://localhost:8545 --private-key $PRIVATE_KEY --broadcast
 ```
 
 ## Contract Interaction
