@@ -1,0 +1,33 @@
+"use client";
+
+import { LoadingPage } from "@/components/loading-page";
+import React, { createContext } from "react";
+import { useConnectorClient } from "wagmi";
+
+export const userContext = createContext<{ userAddress: `0x${string}` }>({
+  userAddress: "0xabc",
+});
+
+export function UserContextProvider({ children }: React.PropsWithChildren) {
+  const { data, isPending } = useConnectorClient();
+
+  if (isPending) {
+    return <LoadingPage />;
+  }
+
+  const userAddress = data?.account.address;
+
+  if (!userAddress) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <p>Connect your wallet to view your NFTs</p>
+      </div>
+    );
+  }
+
+  return (
+    <userContext.Provider value={{ userAddress }}>
+      {children}
+    </userContext.Provider>
+  );
+}
