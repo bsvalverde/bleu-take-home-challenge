@@ -1,6 +1,6 @@
 # Bleu NFT Staking Contract
 
-This directory contains the smart contract implementation for the Bleu NFT staking challenge. The contract allows users to mint NFTs and stake/unstake them.
+This directory contains the smart contract implementation for the Bleu NFT staking challenge. The contract allows users to mint NFTs and stake/unstake them. Attestations are granted when 5 different NFTs are staked by the same user.
 
 ## Key Features
 
@@ -18,6 +18,10 @@ The staking contract `BleuStakingContract` implements:
 
 - `stake()`: Enables NFT staking
 - `unstake()`: Allows withdrawal of staked NFTs
+
+The attestation contract `BleuAttestationContract implements:
+
+- `attest()`: Grants an attestation
 
 ## Development Tools
 
